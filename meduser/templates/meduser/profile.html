@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <main>
+
+        <div class="slider-area ">
+            <div class="single-slider slider-height2 d-flex align-items-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="hero-cap text-center">
+                                <h2>Account</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid" style="padding-top: 53px;">
+            <div class="row">
+                <div class="col-3" style="padding-left: 85px;">
+                    <h3>Account</h3>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a style="color: #000000" class="nav-link active" id="v-pills-home-tab" data-toggle="pill"
+                               href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Contact
+                                details
+                                <i style="float: right" class="fa fa-angle-right"></i></a>
+
+                        </li>
+                        <li class="nav-item">
+                            <a style="color: #000000" class="nav-link" id="v-pills-profile-tab"
+                               data-toggle="pill"
+                               href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">My
+                                Orders
+                                <i style="float: right" class="fa fa-angle-right"></i></a>
+
+                        </li>
+                        <li class="nav-item">
+                            <a style="color: #000000" class="nav-link" id="v-pills-messages-tab" data-toggle="pill"
+                               href="#v-pills-messages"
+                               role="tab" aria-controls="v-pills-messages" aria-selected="false">Change password
+                                <i style="float: right" class="fa fa-angle-right"></i></a>
+
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-9">
+                    <div class="tab-content" id="nav-tabContent">
+
+                        {% if default %}
+                            <div class="tab-pane fade" id="v-pills-home" role="tabpanel"
+                                 aria-labelledby="v-pills-home-tab">
+                        {% else %}
+                            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                                 aria-labelledby="v-pills-home-tab">
+
+                        {% endif %}
+                        <div class="container-fluid">
+                            <h3>Contact Details</h3>
+                            <form class="contact_form" name="save_profile" action="" method="post">
+                                {% csrf_token %}
+                                <div class=" form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="exampleInputEmail1">Name</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" value="{{ full_name }}"
+                                                   id="fullname" name="fullname" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="username">Username</label>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control"
+                                                   value="{{ request.user.username }}" id="username" name="username"
+                                                   readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="exampleInputEmail1">Email</label>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            {% render_field changeForm.email name="email" id="exampleInputEmail1" class="form-control" placeholder="Email" value=request.user.email %}
+                                            <span style="color: red">{{ changeForm.email.errors }}</span>
+                                            {#                                            <input type="email" class="form-control" value="{{ request.user.email }}" id="exampleInputEmail1"#}
+                                            {#                                                   aria-describedby="emailHelp">#}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="mobile">Mobile</label>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            {% render_field changeForm.mobile type="tel" id="mobile" name="mobile" class="form-control" placeholder="10-Digit mobile number" value=request.user.userextra.mobile %}
+                                            <span style="color: red">{{ changeForm.mobile.errors }}</span>
+                                            {#                                            <input type="tel" value="{{ request.user.userextra.mobile }}" class="form-control" id="mobile" name="mobile" pattern="[0-9]{10}">#}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" name="save_profile" value="save_profile"
+                                        class="btn btn-primary">Save
+                                </button>
+                            </form>
+                        </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel"
+                             aria-labelledby="v-pills-profile-tab">
+                            <div class="container-fluid">
+                                <h3>My Orders</h3>
+                                <ul class="list-group list-group-flush">
+                                    {% for lend in lend_orders %}
+                                        <li class="list-group-item">
+                                            <div>
+                                                <div>
+                                                    <b>Order No: </b>{{ lend.name }}
+                                                </div>
+                                                <div>
+                                                    <b>Date: </b>{{ lend.created_date }}
+                                                </div>
+                                                <div>
+                                                    {% if lend.status == 'pending' %}
+                                                        <b>Status: </b><span style="color: red" >{{ lend.get_status_display }}</span>
+                                                        {% elif lend.status == 'pending_approval' %}
+                                                        <b>Status: </b><span style="color: blue" >{{ lend.get_status_display }}</span>
+                                                        {% else %}
+                                                        <b>Status: </b><span style="color: green" >{{ lend.get_status_display }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <form class="contact_form" name="myForm"
+                                                      action={% url 'order' %} method="post">
+                                                    {% csrf_token %}
+                                                    <div style="padding-top: 10px">
+                                                        <input type="hidden" name="lend_order" value="{{ lend.id }}">
+                                                        <button style="border-width: 1px;color: black" type="submit"
+                                                                class="bottom_button"><i class="fas fa-eye"> view</i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+                            </div>
+                        </div>
+                        {% if default %}
+                            <div class="tab-pane fade show active" id="v-pills-messages" role="tabpanel"
+                                 aria-labelledby="v-pills-messages-tab">
+                        {% else %}
+                            <div class="tab-pane fade" id="v-pills-messages" role="tabpanel"
+                                 aria-labelledby="v-pills-messages-tab">
+
+                        {% endif %}
+                        <div class="container-fluid">
+                            <h3>Change password</h3>
+                            <form style="padding-top: 10px" class="contact_form" action="" method="post">
+                                {% csrf_token %}
+                                <div class=" form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="old_password">Old password</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            {% render_field form.old_password class="form-control" placeholder="Old password" id="old_password" %}
+                                            <span style="color: red">{{ form.old_password.errors }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="new_password1">New password</label>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            {% render_field form.new_password1 class="form-control" placeholder="New password" id="new_password1" %}
+                                            <span style="color: red">{{ form.new_password1.errors }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="new_password2">New password confirmation:</label>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            {% render_field form.new_password2 class="form-control" placeholder="New password confirmation:" id="new_password2" %}
+                                            <span style="color: red">{{ form.new_password2.errors }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" name="save_changes" value="save_changes"
+                                        class="btn btn-primary">Change my password
+                                </button>
+                            </form>
+                        </div>
+                        </div>
+
+
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+{% endblock content %}

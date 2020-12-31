@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <main>
+        <div class="container-fluid" style="padding-left:85px;padding-top: 56px;padding-right: 139px;">
+            <div class="container-fluid">
+                <nav class="nav nav-pills flex-column flex-sm-row">
+                    <a style="color: #007BFF" class="flex-sm-fill text-sm-center nav-link" href="{% url 'dashboard' %}">Waiting
+                        for
+                        approval
+                        ({{ total_to_approve }})</a>
+                    <a class="flex-sm-fill text-sm-center nav-link " style="color: #007BFF"
+                       href="{% url 'dashboard_orders' %}">All orders</a>
+                    <a style="color: #007BFF" class="flex-sm-fill text-sm-center nav-link"
+                       href="{% url 'dashboard_amount' %}">Amount
+                        details</a>
+                    <a class="flex-sm-fill text-sm-center nav-link active"
+                       href="{% url 'list_message' %}">Messages</a>
+                </nav>
+            </div>
+            <div class="container-fluid" style="padding-top: 50px">
+                <h3>All Messages</h3>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Sl No:</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Responded</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for message in all_messages %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{ message.name }}</td>
+                            <td>{{ message.subject }}</td>
+                            <td>{{ message.email }}</td>
+                            <td>
+                                {% if message.responded %}
+                                    <i style="color:green;" class="far fa-check-circle"></i>
+                                {% else %}
+                                    <i style="color: red" class="far fa-times-circle"></i>
+                                {% endif %}
+                            </td>
+                            <td><a href="{% url 'message' message=message.id %}" style="color: blue">View</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </main>
+{% endblock content %}

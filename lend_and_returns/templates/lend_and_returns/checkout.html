@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <p id="demo"></p>
+    <div class="row" style="padding-top: 100px">
+        <div class="col-lg-6">
+            <div class="box-element" id="form-wrapper" style="padding-left: 30px">
+                <div class="box-element" id="payment-info">
+                    <ul><h3 style="text-align: center">Paypal Options</h3></ul>
+                    <div style="padding-top: 20px" id="paypal-button-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="container">
+                <div class="cart_inner">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th style="font-family:'Roboto',sans-serif;" scope="col">Product</th>
+                                <th style="font-family:'Roboto',sans-serif;" scope="col">Return date</th>
+                                <th style="font-family:'Roboto',sans-serif;" scope="col">Deposit</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for cart_item in cart_items %}
+                                <tr>
+                                    <td>
+                                        <div class="media">
+                                            <div class="d-flex">
+                                                {% if cart_item.product.thumb_image %}
+                                                    {% if cart_item.product.available %}
+                                                        <img src="{{ cart_item.product.thumb_image.url }}" alt=""/>
+                                                    {% else %}
+                                                        <img style="opacity: .2"
+                                                             src="{{ cart_item.product.thumb_image.url }}" alt=""/>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                            <div class="media-body">
+                                                <a href="{% url 'view_product' product=cart_item.product.id %}"><p
+                                                        style="text-decoration: underline">{{ cart_item.product }}</p>
+                                                </a>
+                                                {% if not cart_item.product.available %}
+                                                    <span style="color: red">(Not available-Remove product from cart before proceeding)</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h5 style="font-family:'Roboto',sans-serif;">{{ cart_item.return_date }}</h5>
+                                    </td>
+
+                                    <td>
+                                        <h5 style="font-family:'Roboto',sans-serif;">{{ currency.symbol }} {{ cart_item.line_total }}</h5>
+                                    </td>
+
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <b><h5 style="font-family:'Roboto',sans-serif;">Subtotal</h5></b>
+                                </td>
+                                <td>
+                                    <b>
+                                        <h5 style="font-family:'Roboto',sans-serif;">{{ currency.symbol }} {{ cart.total }}</h5>
+                                    </b>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Include the PayPal JavaScript SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=&currency=EUR"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+        var total = '{{ cart.total }}'
+
+        function completeOrder(data, capture_id,ref_id, id, amount) {
+
+            var url = "{% url 'book_pay' %}"
+
+            fetch(url, {
+                method: 'post',
+                headers: {
+                    'Content-type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({'total': total, 'capture_id': capture_id, 'ref_id': ref_id,'id': id,'amount':amount})
+            })
+            window.location.href = "{% url 'home' %}"
+        }
+
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+
+            // Set up the transaction
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: parseFloat(total).toFixed(2)
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    // Show a success message to the buyer
+                    completeOrder(data, details.purchase_units[0].payments.captures[0].id, details.purchase_units[0].reference_id, details.id, details.purchase_units[0].payments.captures[0].amount.value)
+                    {#asdasd = JSON.stringify(details);#}
+                    {#alert(asdasd)#}
+                });
+            }
+
+
+        }).render('#paypal-button-container');
+
+    </script>
+{% endblock %}

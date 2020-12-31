@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <main>
+        <section class="contact-section">
+            <div class="container-fluid">
+                <div class="container">
+                    <div class="row" style="padding-left: 18px">
+                        <h5> Name: {{ message_obj.name }} </h5>
+                    </div>
+                    <div class="row" style="padding-left: 18px;padding-top: 12px">
+                        <h5> Subject: {{ message_obj.subject }} </h5>
+                    </div>
+                    <div class="row" style="padding-left: 18px;padding-top: 12px">
+                        <h5> Email: {{ message_obj.email }} </h5>
+                    </div>
+                    <div class="row" style="padding-left: 18px;padding-top: 12px">
+                        <h5> Date: {{ message_obj.created_date }} </h5>
+                    </div>
+                    <div class="row" style="padding-left: 18px;padding-top: 12px">
+                        <u><h5> Message</h5></u>
+                    </div>
+                    <div class="row" style="padding-left: 18px;padding-top: 2px">
+                        {{ message_obj.message }}
+                    </div>
+                    {% if message_obj.responded %}
+                        <div class="row" style="padding-left: 18px;padding-top: 12px">
+                            <u><h5> Reply</h5></u>
+                        </div>
+                        <div class="row" style="padding-left: 18px;padding-top: 2px">
+                            {{ message_obj.reply }}
+                        </div>
+                    {% else %}
+                        <form class="form-contact" action="" method="post" style="padding-top: 30px;width: 50%"
+                              id="asdad">
+                            {% csrf_token %}
+                            <input type="hidden" name="message" value="{{ message_obj.id }}">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <textarea class="form-control w-100" name="reply" id="reply" cols="10"
+                                                  rows="9"
+                                                  placeholder=" Enter Reply" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mt-3">
+                                <button type="submit" class="button button">Send</button>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </main>
+
+{% endblock content %}

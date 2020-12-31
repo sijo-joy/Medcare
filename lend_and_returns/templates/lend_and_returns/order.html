@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+
+    <main>
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6" style="padding-left: 100px">
+                    <section class="text-left" style="padding-top: 50px">
+                        <div class="container">
+                            <h4 style="font-family:'Roboto',sans-serif;">My order - {{ lend_order.name }}</h4>
+                            <span style="font-family:'Roboto',sans-serif;"><b>Order Date: {{ lend_order.created_date }}</b></span></br>
+                            {% if request.user.is_superuser %}
+                                <span style="font-family:'Roboto',sans-serif;"><b>User: {{ lend_order.user.get_full_name }} ({{ lend_order.user.username }})</b></span>
+                                </br>
+                            {% endif %}
+                            <span style="font-family:'Roboto',sans-serif;"><b>Status: {{ lend_order.get_status_display }}</b></span></br>
+                            {% if invoices %}
+                                <span style="font-family:'Roboto',sans-serif;"><b>Invoice:</b></span>
+                                {% for invoice in invoices %}
+                                    <a href="{% url 'invoice' invoice=invoice.id %}" style="color: blue">{{ invoice.name }}</a>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </section>
+                </div>
+                <div class="col-lg-6 col-md-6" style="padding-right: 100px">
+                    <section class="text-right" style="padding-top: 50px">
+                        <div class="container">
+                            {% if lend_order.status == 'pending' %}
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="lend_order" value="{{ lend_order.id }}"/>
+                                    <button type="submit" class="btn-primary" name="request_all"
+                                            value="submit">
+                                        Request Return
+                                    </button>
+                                </form>
+                            {% endif %}
+                            {% if lend_order.status == 'pending_approval' and request.user.is_superuser %}
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="lend_order" value="{{ lend_order.id }}"/>
+                                    <button type="submit" class="btn-primary" name="approve_all"
+                                            value="submit">
+                                        Approve Return
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <section class="cart_area" style="padding-top: 50px">
+                <div class="container">
+                    <div class="cart_inner">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th style="font-family:'Roboto',sans-serif;" scope="col">Product</th>
+                                    <th style="font-family:'Roboto',sans-serif;" scope="col">Return date</th>
+                                    <th style="font-family:'Roboto',sans-serif;" scope="col">Status</th>
+                                    <th style="font-family:'Roboto',sans-serif;" scope="col">Deposit</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for line in lend_lines %}
+                                    <tr>
+                                        <td>
+                                            <div class="media">
+                                                <div class="d-flex">
+                                                    {% if line.product.thumb_image %}
+                                                        <img src="{{ line.product.thumb_image.url }}" alt=""/>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="media-body">
+                                                    <a href="{% url 'view_product' product=line.product.id %}"><p
+                                                            style="text-decoration: underline">{{ line.product }}</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if line.status == 'pending' %}
+                                                <form method="post" name="update_date">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="line" value="{{ line.id }}"/>
+                                                    <input type="hidden" name="lend_order"
+                                                           value="{{ lend_order.id }}"/>
+                                                    <input type="date" id="date" class="date"
+                                                           min="{{ today }}" name="date"
+                                                           value="{{ line.expected_return_date |date:"Y-m-d" }}"
+                                                    />
+                                                    <button type="submit" class="btn-primary" name="update_date"
+                                                            value="submit"
+                                                    >
+                                                        Update
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <h5 style="font-family:'Roboto',sans-serif;">{{ line.expected_return_date }}</h5>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <h5 style="font-family:'Roboto',sans-serif;">{{ line.get_status_display }}</h5>
+                                        </td>
+                                        <td>
+                                            <h5 style="font-family:'Roboto',sans-serif;">{{ currency.symbol }} {{ line.line_total }}</h5>
+                                        </td>
+                                        {% if line.status == 'pending' %}
+                                            <td>
+                                                <form method="post" name="return_line">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="line" value="{{ line.id }}"/>
+                                                    <input type="hidden" name="lend_order"
+                                                           value="{{ lend_order.id }}"/>
+                                                    <button type="submit" class="btn-primary" name="return_line"
+                                                            value="submit"><i class="fas fa-exchange-alt">
+                                                        Request return</i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        {% endif %}
+                                        {% if line.status == 'pending_approval' %}
+                                            <td>
+                                                <form method="post" name="cancel_return">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="line" value="{{ line.id }}"/>
+                                                    <input type="hidden" name="lend_order"
+                                                           value="{{ lend_order.id }}"/>
+                                                    <button type="submit" class="btn-warning"
+                                                            style="background-color: red;border-color: red"
+                                                            name="cancel_return"
+                                                            value="submit">
+                                                        Cancel request</i>
+                                                    </button>
+                                                </form>
+
+                                            </td>
+                                            {% if request.user.is_superuser %}
+                                                <td>
+                                                    <form method="post" name="approve_return">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="line" value="{{ line.id }}"/>
+                                                        <input type="hidden" name="lend_order"
+                                                               value="{{ lend_order.id }}"/>
+                                                        <button type="submit" class="btn-primary"
+                                                                name="approve_return"
+                                                                value="submit">
+                                                            Approve request</i>
+                                                        </button>
+                                                    </form>
+
+                                                </td>
+                                            {% endif %}
+                                        {% endif %}
+
+
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <h5 style="font-family:'Roboto',sans-serif;">Subtotal</h5>
+                                    </td>
+                                    <td>
+                                        <h5 style="font-family:'Roboto',sans-serif;">{{ currency.symbol }} {{ lend_order.total }}</h5>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+{% endblock content %}

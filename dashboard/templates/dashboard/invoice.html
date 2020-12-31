@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+
+    <main>
+        <div class="container-fluid">
+            <section class="text-left" style="padding-top: 50px">
+                <div class="container">
+                    <h4 style="font-family:'Roboto',sans-serif;">Invoice - {{ invoice_obj.name }}</h4>
+                    <span style="font-family:'Roboto',sans-serif;"><b>Date: {{ invoice_obj.created_date }}</b></span></br>
+                    {% if request.user.is_superuser %}
+                        <span style="font-family:'Roboto',sans-serif;"><b>User: {{ invoice_obj.user.get_full_name }} ({{ invoice_obj.user.username }})</b></span>
+                        </br>
+
+                    {% endif %}
+                    <span style="font-family:'Roboto',sans-serif;"><b>Type: {{ invoice_obj.get_type_display }}</b></span></br>
+                    <span style="font-family:'Roboto',sans-serif;"><b>Order: <a style="color: blue"
+                                                                                href="{% url 'order' lend_order_id=invoice_obj.lend_order.id %}">{{ invoice_obj.lend_order }}</a></b></span>
+                </div>
+            </section>
+            <section class="cart_area" style="padding-top: 50px">
+                <div class="container">
+                    <div class="cart_inner">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th style="font-family:'Roboto',sans-serif;" scope="col">Product</th>
+                                    <th style="font-family:'Roboto',sans-serif;" scope="col">Date</th>
+                                    <th style="font-family:'Roboto',sans-serif;" scope="col">Deposit</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for line in lines %}
+                                    <tr>
+                                        <td>
+                                            <div class="media">
+                                                <div class="d-flex">
+                                                    {% if line.product.thumb_image %}
+                                                        <img src="{{ line.product.thumb_image.url }}" alt=""/>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="media-body">
+                                                    <a href="{% url 'view_product' product=line.product.id %}"><p
+                                                            style="text-decoration: underline">{{ line.product }}</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+
+                                            <h5 style="font-family:'Roboto',sans-serif;">{{ line.created_date }}</h5>
+                                        </td>
+                                        <td>
+                                            <h5 style="font-family:'Roboto',sans-serif;">{{ currency.symbol }} {{ line.line_total }}</h5>
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <b><h5 style="font-family:'Roboto',sans-serif;">Subtotal</h5></b>
+                                    </td>
+                                    <td>
+                                        <b><h5 style="font-family:'Roboto',sans-serif;">{{ currency.symbol }} {{ invoice_obj.total }}</h5></b>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+{% endblock content %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <main>
+        <div class="container" style="padding-top: 60px">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6">
+                    <div class="login_part_form">
+                        <br class="login_part_form_iner">
+                        <h3>Donate<br></h3>
+                        <p>Fill this form to donate products to Medcare</p>
+
+                        <form class="row contact_form" name="myForm" action="" method="post"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="col-md-12 form-group p_star">
+                                {% render_field form.user_name class="form-control" placeholder="User name" value=user.first_name %}
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                {% render_field form.mobile class="form-control" placeholder="Mobile" value=user.userextra.mobile %}
+                            </div>
+                            <span style="color: red;padding-left: 24px">{{ form.mobile.errors }}</span>
+                            <div class="col-md-12 form-group p_star">
+                                {% render_field form.name class="form-control" placeholder="User name" value=user.first_name %}
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                {% render_field form.email class="form-control" placeholder="Email" value=user.email %}
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                {% render_field form.address style="min-width: 50%" class="form-control" placeholder="Address" %}
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                {% render_field form.product_name class="form-control" placeholder="Product Name" %}
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                {% render_field form.Description class="form-control" placeholder="Description" %}
+                            </div>
+                            <div>
+                                <div class="col-md-12 form-group p_star" id="category">
+                                    <span style="padding-left: 10px">Select product category</span>
+                                    {% render_field form.product_category class="form-control" id="category_field" placeholder="Product" %}
+
+                                </div>
+                                <span style="color: red;padding-left: 27px">{{ form.product_category.errors }}</span>
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <label for="myCheck" style="color: blue;padding-left:1px">Did'nt Find product under
+                                    category?</label>
+                                {% render_field form.check_box id="myCheck" onclick="myFunction()" %}
+                                {#                                <input style="margin-left: 10px;margin-top: 7px;" type="checkbox" name="check_box" id="myCheck"#}
+                                {#                                       onclick="myFunction()">#}
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                {% render_field form.product_category_text style="display: none" class="form-control" id="text" placeholder="Type category name" %}
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                {% render_field form.filesss accept=".jpg, .jpeg, .png" class="form-control" %}
+                            </div>
+                            <span style="color: red;padding-left: 24px">{{ form.filesss.errors }}</span>
+                            </br>
+                            <div></div>
+                            <div class="col-md-12 form-group">
+                                <button type="submit" value="submit" class="btn_3">
+                                    Submit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+
+
+
+
+    <script>
+        function myFunction() {
+            var checkBox = document.getElementById("myCheck");
+            var category = document.getElementById("category");
+            var text = document.getElementById("text");
+            if (checkBox.checked == true) {
+                text.style.display = "block";
+                text.required = true;
+                category.style.display = "none"
+            } else {
+                text.required = false;
+                document.getElementById("text").value = ""
+                text.style.display = "none";
+                category.style.display = "block"
+
+            }
+        }
+    </script>
+
+{% endblock content %}

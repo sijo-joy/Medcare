@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <main>
+        <div class="container-fluid" style="padding-left:85px;padding-top: 56px;padding-right: 139px;">
+            <div class="container-fluid">
+                <nav class="nav nav-pills flex-column flex-sm-row">
+                    <a class="flex-sm-fill text-sm-center nav-link active" href="{% url 'dashboard' %}">Waiting for approval
+                        ({{ total_to_approve }})</a>
+                    <a style="color: #007BFF" class="flex-sm-fill text-sm-center nav-link" href="{% url 'dashboard_orders' %}">All orders</a>
+                    <a style="color: #007BFF" class="flex-sm-fill text-sm-center nav-link" href="{% url 'dashboard_amount' %}">Amount details</a>
+                    <a style="color: #007BFF" class="flex-sm-fill text-sm-center nav-link" href="{% url 'list_message' %}">Messages</a>
+                </nav>
+            </div>
+            <div class="container-fluid" style="padding-top: 50px">
+            {% if donations_to_approve %}
+
+                <div class="container-fluid">
+                    <h3>Donations</h3>
+                    <ul class="list-group list-group-flush">
+                        {% for donation in donations_to_approve %}
+                            <li class="list-group-item">
+                                <div>
+                                    <div>
+                                        <b>Donor Name: </b>{{ donation.user_name }}
+                                    </div>
+                                    <div>
+                                        <b>Product: </b>{{ donation.product_name }}
+                                    </div>
+                                    <form class="contact_form" name="view_donation"
+                                          action={% url 'view_donation' %} method="post">
+                                        {% csrf_token %}
+                                        <div style="padding-top: 10px">
+                                            <input type="hidden" name="donation" value="{{ donation.id }}">
+                                            <button style="border-width: 1px;color: black" type="submit"
+                                                    class="bottom_button"><i class="fas fa-eye"> view</i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+            {% endif %}
+            {% if lend_order_to_approve %}
+                <div class="container-fluid" style="padding-top: 20px">
+                    <h3>Products for return</h3>
+                    <ul class="list-group list-group-flush">
+                        {% for lend_orders in lend_order_to_approve %}
+                            <li class="list-group-item">
+                                <div>
+                                    <div>
+                                        <b>Order No: </b>{{ lend_orders.name }}
+                                    </div>
+                                    <div>
+                                        <b>Date: </b>{{ lend_orders.created_date }}
+                                    </div>
+                                    <form class="contact_form" name="myForm"
+                                          action={% url 'order' %} method="post">
+                                        {% csrf_token %}
+                                        <div style="padding-top: 10px">
+                                            <input type="hidden" name="lend_order" value="{{ lend_orders.id }}">
+                                            <button style="border-width: 1px;color: black" type="submit"
+                                                    class="bottom_button"><i class="fas fa-eye"> view</i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    </main>
+{% endblock content %}

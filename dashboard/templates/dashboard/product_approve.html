@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <main>
+        <div class="container" style="padding-top: 60px">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6">
+                    <div class="login_part_form">
+                        <div class="login_part_form_iner">
+                            <h3>Approve and create product<br></h3>
+
+                            <form class="row contact_form" name="myForm" action="" method="post"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field product_form.user_name class="form-control" placeholder="User name" value=donation_obj.user_name readonly=true %}
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field product_form.mobile class="form-control" placeholder="Mobile" value=donation_obj.mobile readonly=true %}
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field product_form.email class="form-control" placeholder="Email" value=donation_obj.email readonly=true %}
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field product_form.name class="form-control" placeholder="Product Name" value=donation_obj.product_name %}
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field product_form.Description class="form-control" placeholder="Description" %}
+                                </div>
+                                <input type="hidden" name="donation" value="{{ donation_id }}">
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field product_form.deposite_Amount class="form-control" placeholder="Deposit " required=True %}
+                                </div>
+                                <div class="col-md-12 form-group p_star"><span style="padding-left: 10px">Select category</span>
+                                    {% render_field product_form.product_category class="form-control" placeholder="Product" value=donation_obj.product_category %}
+                                </div>
+                            <div class="col-md-12 form-group p_star">
+                                <label for="myCheck" style="color: blue;padding-left:1px">Did'nt Find product under
+                                    category?</label>
+                                <input type="checkbox" id="myCheck" onclick="myFunction()">
+                            </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field product_form.product_category_text style="display: none" class="form-control" id="text" placeholder="Type category name" value=donation_obj.product_category_text %}
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {% for image in images %}
+                                        <div class="popular-img" style="padding-top: 25px">
+                                            <img height="150px" width="150px" src={{ image.image.url }} alt="">
+                                        </div>
+                                        <div class="popular-caption" style="padding-top: 10px">
+
+                                            <input type="hidden" name="donation" value="{{ donation_id }}">
+                                            <input type="hidden" name="image_id" value={{ image.id }}>
+                                            <button type="submit" name="delete_img" value="submit"
+                                                    style="color: red;border: red"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field product_form.files class="form-control" %}
+                                </div>
+
+                                <div class="col-md-12 form-group">
+                                    <button type="submit" name="approve_product" value="submit" class="btn_3">
+                                        Approve and create product
+                                    </button>
+                                </div>
+                                {% if form.errors %}
+                                    <div class="alert alert-danger" role="alert">{{ form.errors }}</div>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+
+    <script>
+        function myFunction() {
+            var checkBox = document.getElementById("myCheck");
+            var text = document.getElementById("text");
+            if (checkBox.checked == true) {
+                text.style.display = "block";
+            } else {
+                text.style.display = "none";
+            }
+        }
+    </script>
+
+{% endblock content %}

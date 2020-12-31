@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <head>
+        <style>
+
+            h6 {
+                font-size: 17px;
+            }
+
+            div.scroll {
+                margin: 4px;
+                padding: 4px;
+                width: auto;
+                height: 220px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                text-align: justify;
+            }
+        </style>
+    </head>
+
+    <div class="slider-area ">
+        <div class="single-slider slider-height2 d-flex align-items-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="hero-cap text-center">
+                            <h2>Products</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="popular-items latest-padding">
+        <div class="container">
+
+
+            <!-- Nav Card -->
+            <!-- card one -->
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="left_sidebar_area">
+                        <aside class="left_widgets p_filter_widgets">
+                            <div class="l_w_title">
+                                <h4>Browse Categories</h4>
+                            </div>
+                            <div class="widgets_inner scroll">
+                                <ul class="list">
+                                    {% for key, value in product_categories %}
+                                        {% if key.id == current_category %}
+                                            <li>
+                                                <a href="{% url 'products' key.id %}"><b>{{ key.name }}</b></a>
+                                                <b><span>({{ value }})</span></b>
+                                            </li>
+                                        {% else %}
+                                            <li>
+                                                <a href="{% url 'products' key.id %}">{{ key.name }}</a>
+                                                <span>({{ value }})</span>
+                                            </li>
+                                        {% endif %}
+
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-9">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="product_top_bar d-flex justify-content-between align-items-center">
+                                <div class="single_product_menu">
+                                    <h6>{{ total }} Products Found</h6>
+                                </div>
+                                <div class="single_product_menu d-flex">
+                                    <h6>sort by : </h6>
+                                    {% if request.GET.sort %}
+                                        {% if request.GET.sort == 'name' %}
+                                            <a href="?sort=name" style="color: #524d4d;padding-left: 15px">
+                                                <ul><strong style="text-decoration: underline">Name</strong></ul>
+                                            </a>
+                                            <a href="?sort=new" style="color: #524d4d;padding-left: 15px">
+                                                <span>Latest</span>
+                                            </a>
+                                        {% endif %}
+                                        {% if request.GET.sort == 'new' %}
+                                            <a href="?sort=name" style="color: #524d4d;padding-left: 15px">
+                                                <span>Name</span>
+                                            </a>
+                                            <a href="?sort=new" style="color: #524d4d;padding-left: 15px">
+                                                <ul><strong style="text-decoration: underline">Latest</strong></ul>
+                                            </a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a href="?sort=name" style="color: #524d4d;padding-left: 15px">
+                                            <span>Name</span>
+                                        </a>
+                                        <a href="?sort=new" style="color: #524d4d;padding-left: 15px">
+                                            <span>Latest</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="single_product_menu d-flex">
+                                    {% if products.has_previous %}
+                                        {% if request.GET.sort %}
+                                            <a href="?page=1&sort={{ request.GET.sort }}" class="pagination-action">
+                                        {% else %}
+                                            <a href="?page=1" class="pagination-action">
+                                        {% endif %}
+                                    <i class="fas fa-angle-double-left"></i>
+                                    </a>
+                                        {% if request.GET.sort %}
+                                            <a href="?page={{ products.previous_page_number }}&sort={{ request.GET.sort }}"
+                                               class="pagination-action">
+                                        {% else %}
+                                            <a href="?page={{ products.previous_page_number }}"
+                                               class="pagination-action">
+                                        {% endif %}
+                                    <i class="fas fa-angle-left"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% for num in products.paginator.page_range %}
+                                        {% if products.number == num %}
+                                            <span class="pagination-number pagination-current">{{ num }}</span>
+                                        {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                                            {% if request.GET.sort %}
+                                                <a href="?page={{ num }}&sort={{ request.GET.sort }}"><span
+                                                        class="pagination-number">{{ num }}</span></a>
+                                            {% else %}
+                                                <a href="?page={{ num }}"><span
+                                                        class="pagination-number">{{ num }}</span></a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if products.has_next %}
+                                        {% if request.GET.sort %}
+                                            <a href="?page={{ products.next_page_number }}&sort={{ request.GET.sort }} "
+                                               class="pagination-action">
+                                        {% else %}
+                                            <a href="?page={{ products.next_page_number }} " class="pagination-action">
+                                        {% endif %}
+                                    <i class="fas fa-angle-right"></i>
+                                    </a>
+                                        {% if request.GET.sort %}
+                                            <a href="?page={{ products.paginator.num_pages }}&sort={{ request.GET.sort }}"
+                                               class="pagination-action">
+                                        {% else %}
+                                            <a href="?page={{ products.paginator.num_pages }}"
+                                               class="pagination-action">
+                                        {% endif %}
+                                    <i class="fas fa-angle-double-right"></i>
+                                    </a>
+
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="row align-items-center latest_product_inner">
+                            {% for product in products %}
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                                    <div class="single-popular-items mb-50 text-center">
+                                        {% if product.2.available %}
+                                            <a href="{% url 'view_product' product=product.2.id %}">
+                                                <div class="popular-img">
+                                                    <img style="height: 250px" src={{ product.1 }} alt="">
+                                                </div>
+                                                <div class="popular-caption">
+                                                    <h3>{{ product.0 }}</h3>
+                                                </div>
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'view_product' product=product.2.id %}">
+                                                <div class="popular-img">
+                                                    <img style="height: 250px;opacity: .2" src={{ product.1 }} alt="">
+                                                    <div class="middle">
+                                                        <div class="text" style="color: red;">Not available
+                                                        </div>
+                                                        <div class="text" style="color: black;">
+                                                            Expected return
+                                                            date: {{ product.2.expected_return_date }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="popular-caption">
+                                                    <h3>{{ product.0 }}</h3>
+
+                                                </div>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Nav Card -->
+        </div>
+    </section>
+    <!-- product_list part end-->
+{% endblock content %}

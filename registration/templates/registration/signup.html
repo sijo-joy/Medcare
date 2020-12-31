@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+    <main>
+        <section class="login_part ">
+            <div class="container" style="width: 50%;">
+                <div class="row align-items-center">
+                    <div class="login_part_form">
+                        <div class="login_part_form_iner">
+                            <h2>Create your Account</h2>
+                            <form class="row contact_form" name="myForm" action="" method="post" style="padding-top: 20px">
+                                {% csrf_token %}
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field form.fullname type="text" class="form-control" placeholder="Full Name" required=True %}
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field form.username class="form-control" placeholder="User Name" %}
+                                </div>
+                                <span style="color: red;padding-left: 24px">{{form.username.errors}}</span>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field form.email class="form-control" placeholder="Email" %}
+                                </div>
+                                <span style="color: red;padding-left: 24px">{{form.email.errors}}</span>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field form.mobile class="form-control" placeholder="Mobile" %}
+                                </div>
+                                <span style="color: red;padding-left: 24px">{{form.mobile.errors}}</span>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field form.password1 class="form-control" placeholder="Password" %}
+                                </div>
+                                <span style="color: red;padding-left: 24px">{{form.password1.errors}}</span>
+                                <div class="col-md-12 form-group p_star">
+                                    {% render_field form.password2 class="form-control" placeholder="Re-enter Password" %}
+                                </div>
+                                <span style="color: red;padding-left: 24px">{{form.password2.errors}}</span>
+                                <div class="col-md-12 form-group">
+                                        <button type="submit" value="submit" class="btn_3">
+                                            Sign Up
+                                        </button>
+
+                                    </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+{% endblock content %}

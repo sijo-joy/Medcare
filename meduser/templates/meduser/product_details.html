@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <main>
+        <!-- Hero Area Start-->
+        <!-- Hero Area End-->
+        <!--================Single Product Area =================-->
+        <section class="popular-items">
+            <div class="container">
+                <div class="product_image_area">
+                    <div class="container">
+                        <div class="row">
+                             <div class="col-lg-6">
+                                <div class="product_img_slide owl-carousel">
+                                    {% for image in images %}
+                                        <div class="single_product_img">
+                                            <img src={{ image }} alt="#" align="center" class="img-fluid"
+                                                 style="max-width: 500px;max-height: 800px">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="single_product_text text-center">
+                                    <h3>{{ product.name }}</h3>
+                                    {% if product.Description %}
+                                        <pre style="white-space: pre-wrap;overflow-x: hidden;font-family:'Roboto',sans-serif;">{{ des }}</pre>
+                                    {% endif %}
+                                    <strong>Deposite: </strong><span>{{ currency.symbol }} {{ product.deposite_Amount }}</span>
+                                    <div class="card_area">
+                                        <div class="product_count_area">
+                                            {% if not product.available %}
+                                                <div>
+                                                    <div>
+                                                        <h2 style="color: red">Product Not Available</h2>
+                                                    </div>
+                                                    <div>
+                                                        Expected Return date: {{ product.expected_return_date }}
+                                                    </div>
+                                                </div>
+                                            {% elif already_incart == 1 %}
+                                                <h2 style="color: red">Allready in Cart</h2>
+                                            {% else %}
+
+                                                <form class="row contact_form" name="myForm"
+                                                      action="{% url 'add_to_cart' %}" method="get">
+                                                    {% csrf_token %}
+                                                    <div class="col-md-12 form-group p_star">
+                                                        <label for="date">Expected return date</label>
+                                                        <input type="hidden" name="product" value="{{ product.id }}"/>
+                                                        <input type="date" class="form-control" id="date"
+                                                               min="{{ today }}" name="date"
+                                                               required/>
+                                                        <button style="margin-top: 10px" type="submit" value="submit"
+                                                                class="btn_3">
+                                                            Add to cart
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--================ End Single Product Area =================-->
+    </main>
+
+
+
+{% endblock content %}

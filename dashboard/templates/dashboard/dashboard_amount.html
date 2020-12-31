@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <main>
+        <div class="container-fluid" style="padding-left:85px;padding-top: 56px;padding-right: 139px;">
+            <div class="container-fluid">
+                <nav class="nav nav-pills flex-column flex-sm-row">
+                    <a style="color: #007BFF" class="flex-sm-fill text-sm-center nav-link" href="{% url 'dashboard' %}">Waiting
+                        for
+                        approval
+                        ({{ total_to_approve }})</a>
+                    <a class="flex-sm-fill text-sm-center nav-link " style="color: #007BFF"
+                       href="{% url 'dashboard_orders' %}">All orders</a>
+                    <a class="flex-sm-fill text-sm-center nav-link active" href="{% url 'dashboard_amount' %}">Amount
+                        details</a>
+                    <a style="color: #007BFF" class="flex-sm-fill text-sm-center nav-link" href="{% url 'list_message' %}">Messages</a>
+                </nav>
+            </div>
+            <div class="container-fluid" style="padding-top: 50px">
+                <h5>Total amount in hand: {{ cash_in__hand }}</h5>
+            </div>
+            <div class="container-fluid" style="padding-top: 50px">
+                <h3>All Invoices In</h3>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Sl No:</th>
+                        <th scope="col">Invoice</th>
+                        <th scope="col">Lend Order</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for invoice in all_in_invoices %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td><a href="{% url 'invoice' invoice=invoice.id %}" style="color: blue">{{ invoice.name }}</a></td>
+                            <td>{{ invoice.lend_order }}</td>
+                            <td>{{ invoice.created_date }}</td>
+                            <td>{{ invoice.user.get_full_name }}</td>
+                            <td>{{ invoice.total }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="table-primary">
+                        <th scope="row"></th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><strong>Total</strong></td>
+                        <td><strong>{{ total_in  }}</strong></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <h3 style="padding-top: 40px">All Invoices Out</h3>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Sl No:</th>
+                        <th scope="col">Invoice</th>
+                        <th scope="col">Lend Order</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Amount</th>
+                    </tr>
+
+                    </thead>
+                    <tbody>
+                    {% for invoice in all_out_invoices %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td><a href="{% url 'invoice' invoice=invoice.id %}" style="color: blue">{{ invoice.name }}</a></td>
+                            <td>{{ invoice.lend_order }}</td>
+                            <td>{{ invoice.created_date }}</td>
+                            <td>{{ invoice.user.get_full_name }}</td>
+                            <td>{{ invoice.total }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="table-primary">
+                        <th scope="row"></th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><strong>Total</strong></td>
+                        <td><strong>{{ total_out }}</strong></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </main>
+{% endblock content %}
