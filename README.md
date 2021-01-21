@@ -13,7 +13,7 @@ $ cd Medcare
 Create a virtual environment to install dependencies in and activate it:
 
 ```sh
-$ virtualenv2 --no-site-packages env
+$ python3 -m venv env
 $ source env/bin/activate
 ```
 
